@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TriveniVenkat's Home Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<style>
+  :root {
+    --bg-primary: #0b0d11;
+    --bg-secondary: #12151c;
+    --bg-card: #1a1e28;
+    --bg-card-hover: #1f2430;
+    --bg-sidebar: #0e1017;
+    --text-primary: #e8eaed;
+    --text-secondary: #9aa0a6;
+    --text-muted: #5f6368;
+    --accent: #3b82f6;
+    --accent-glow: rgba(59, 130, 246, 0.15);
+    --green: #22c55e;
+    --green-bg: rgba(34, 197, 94, 0.12);
+    --red: #ef4444;
+    --red-bg: rgba(239, 68, 68, 0.12);
+    --amber: #f59e0b;
+    --amber-bg: rgba(245, 158, 11, 0.12);
+    --cyan: #06b6d4;
+    --border: #1e293b;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4);
+    --transition: 0.2s ease;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    display: flex;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 12px;
+  }
+  .sidebar-brand {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 10px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .sidebar-brand .logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), #8b5cf6);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: #fff;
+  }
+  .sidebar-brand h2 {
+    font-size: 14px; font-weight: 600; color: var(--text-primary); line-height: 1.3;
+  }
+  .sidebar-brand .sub { font-size: 11px; color: var(--text-muted); }
+  .nav-section {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--text-muted); padding: 16px 10px 6px; font-weight: 600;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: var(--radius-sm);
+    cursor: pointer; color: var(--text-secondary);
+    font-size: 13.5px; font-weight: 450;
+    transition: all var(--transition); margin-bottom: 2px;
+    border: none; background: none; width: 100%; text-align: left;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
+  .nav-item.active { background: var(--accent-glow); color: var(--accent); }
+  .nav-item i { width: 18px; text-align: center; font-size: 14px; }
+  .nav-item .badge {
+    margin-left: auto; background: var(--red-bg); color: var(--red);
+    font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600;
+  }
+  .sidebar-footer {
+    margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border);
+    font-size: 11px; color: var(--text-muted); text-align: center;
+  }
+
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .header {
+    padding: 18px 28px; background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  }
+  .header-left h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; }
+  .header-left .date-time { font-size: 12.5px; color: var(--text-muted); margin-top: 2px; }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .status-dot.green { background: var(--green); box-shadow: 0 0 8px rgba(34,197,94,0.5); }
+  .status-dot.red { background: var(--red); box-shadow: 0 0 8px rgba(239,68,68,0.5); }
+  .status-dot.amber { background: var(--amber); box-shadow: 0 0 8px rgba(245,158,11,0.5); }
+  .header-status { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+
+  .content {
+    flex: 1; overflow-y: auto; padding: 22px 28px 40px;
+    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  }
+  .content::-webkit-scrollbar { width: 5px; }
+  .content::-webkit-scrollbar-track { background: transparent; }
+  .content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  .section { display: none; }
+  .section.active { display: block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .section-title {
+    font-size: 16px; font-weight: 600; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title i { color: var(--accent); }
+
+  .overview-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px;
+  }
+  .overview-card {
+    background: var(--bg-card); border-radius: var(--radius);
+    padding: 18px; border: 1px solid var(--border); transition: all var(--transition);
+  }
+  .overview-card:hover { border-color: #2a3346; background: var(--bg-card-hover); }
+  .overview-card .label {
+    font-size: 11.5px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; margin-bottom: 8px;
+  }
+  .overview-card .value { font-size: 26px; font-weight: 650; letter-spacing: -0.5px; margin-bottom: 6px; }
+  .overview-card .sub { font-size: 11.5px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
+  .overview-card .sub i { font-size: 10px; }
+  .trend-up { color: var(--green); }
+  .trend-down { color: var(--red); }
+
+  .stat-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 22px;
+  }
+  .stat-card {
+    background: var(--bg-card); border-radius: var(--radius);
+    padding: 16px 18px; border: 1px solid var(--border);
+    display: flex; align-items: center; gap: 14px; transition: all var(--transition);
+  }
+  .stat-card:hover { border-color: #2a3346; background: var(--bg-card-hover); }
+  .stat-card .icon {
+    width: 40px; height: 40px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+  }
+  .stat-card .icon.blue { background: rgba(59,130,246,0.12); color: var(--accent); }
+  .stat-card .icon.green { background: var(--green-bg); color: var(--green); }
+  .stat-card .icon.red { background: var(--red-bg); color: var(--red); }
+  .stat-card .icon.amber { background: var(--amber-bg); color: var(--amber); }
+  .stat-card .icon.cyan { background: rgba(6,182,212,0.12); color: var(--cyan); }
+  .stat-card .icon.purple { background: rgba(139,92,246,0.12); color: #8b5cf6; }
+  .stat-card .info { flex: 1; }
+  .stat-card .info .title { font-size: 12px; color: var(--text-muted); margin-bottom: 2px; }
+  .stat-card .info .desc { font-size: 13.5px; color: var(--text-primary); font-weight: 500; }
+  .stat-card .info .desc .highlight { color: var(--accent); }
+
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 22px; }
+  .chart-card {
+    background: var(--bg-card); border-radius: var(--radius);
+    padding: 18px; border: 1px solid var(--border);
+  }
+  .chart-card .card-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;
+  }
+  .chart-card .card-header h3 { font-size: 13.5px; font-weight: 550; }
+  .chart-card .card-header .chip {
+    font-size: 11px; padding: 3px 10px; border-radius: 12px;
+    background: rgba(255,255,255,0.05); color: var(--text-secondary);
+  }
+  .chart-wrap { position: relative; height: 180px; }
+  .chart-wrap canvas { width: 100% !important; }
+
+  .appliance-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px;
+  }
+  .appliance-card {
+    background: var(--bg-card); border-radius: var(--radius);
+    padding: 16px; border: 1px solid var(--border);
+    transition: all var(--transition); cursor: pointer;
+  }
+  .appliance-card:hover { border-color: #2a3346; background: var(--bg-card-hover); transform: translateY(-1px); }
+  .appliance-card.online { border-left: 3px solid var(--green); }
+  .appliance-card.offline { border-left: 3px solid var(--red); opacity: 0.7; }
+  .appliance-card .app-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .appliance-card .app-icon {
+    width: 36px; height: 36px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center; font-size: 15px;
+  }
+  .appliance-card .app-name { font-size: 13.5px; font-weight: 550; }
+  .appliance-card .app-status { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+  .appliance-card .app-value { font-size: 20px; font-weight: 650; letter-spacing: -0.3px; }
+  .appliance-card .app-value .unit { font-size: 12px; color: var(--text-muted); font-weight: 400; margin-left: 2px; }
+  .appliance-card .controls { margin-top: 10px; display: flex; gap: 6px; }
+  .appliance-card .controls button {
+    flex: 1; padding: 6px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: rgba(255,255,255,0.03);
+    color: var(--text-secondary); font-size: 11.5px; cursor: pointer;
+    transition: all var(--transition); font-family: inherit;
+  }
+  .appliance-card .controls button:hover { background: rgba(255,255,255,0.07); color: var(--text-primary); }
+  .appliance-card .controls button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .toggle-switch {
+    width: 38px; height: 20px; border-radius: 10px;
+    background: var(--border); position: relative; cursor: pointer;
+    transition: background var(--transition); flex-shrink: 0;
+  }
+  .toggle-switch.on { background: var(--accent); }
+  .toggle-switch::after {
+    content: ''; position: absolute; width: 16px; height: 16px;
+    border-radius: 50%; top: 2px; left: 2px; background: #fff;
+    transition: transform var(--transition);
+  }
+  .toggle-switch.on::after { transform: translateX(18px); }
+
+  .cctv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+  .cam-card {
+    background: var(--bg-card); border-radius: var(--radius);
+    border: 1px solid var(--border); overflow: hidden; transition: all var(--transition);
+  }
+  .cam-card:hover { border-color: #2a3346; }
+  .cam-card .cam-header {
+    padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .cam-card .cam-header .cam-info { display: flex; align-items: center; gap: 8px; }
+  .cam-card .cam-header .cam-name { font-size: 13px; font-weight: 550; }
+  .cam-card .cam-header .cam-loc { font-size: 11px; color: var(--text-muted); }
+  .cam-card .cam-badge {
+    font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 500;
+  }
+  .cam-card .cam-badge.live { background: var(--red-bg); color: var(--red); }
+  .cam-card .cam-badge.clear { background: var(--green-bg); color: var(--green); }
+  .cam-view {
+    height: 180px; background: #000; display: flex;
+    align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .cam-view .cam-placeholder { text-align: center; color: var(--text-muted); }
+  .cam-view .cam-placeholder i { font-size: 32px; margin-bottom: 6px; opacity: 0.4; display: block; }
+  .cam-view .rec-indicator {
+    position: absolute; top: 10px; left: 10px;
+    width: 8px; height: 8px; border-radius: 50%; background: var(--red);
+    animation: blink 1.2s infinite;
+  }
+  @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0.2; } }
+  .cam-card .cam-footer {
+    padding: 8px 14px; display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--text-muted); background: rgba(0,0,0,0.15);
+  }
+  .cam-card .cam-footer .cam-time { font-family: monospace; }
+
+  .roborock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+  .detail-card {
+    background: var(--bg-card); border-radius: var(--radius);
+    padding: 18px; border: 1px solid var(--border);
+  }
+  .detail-card .dc-title {
+    font-size: 12px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;
+  }
+  .detail-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-row .dr-label { font-size: 13px; color: var(--text-secondary); }
+  .detail-row .dr-value { font-size: 13.5px; font-weight: 500; }
+  .battery-bar {
+    width: 100%; height: 6px; background: var(--border);
+    border-radius: 3px; margin-top: 4px; overflow: hidden;
+  }
+  .battery-bar .fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+  .battery-bar .fill.green { background: var(--green); }
+  .battery-bar .fill.amber { background: var(--amber); }
+  .battery-bar .fill.red { background: var(--red); }
+  .clean-history { max-height: 200px; overflow-y: auto; }
+  .history-item {
+    display: flex; justify-content: space-between; padding: 7px 0;
+    font-size: 12.5px; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--text-secondary);
+  }
+  .history-item:last-child { border-bottom: none; }
+  .history-item .hi-time { font-family: monospace; font-size: 12px; }
+  .schedule-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 13px; }
+  .schedule-item .day-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  .thermo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+  .thermo-card {
+    background: var(--bg-card); border-radius: var(--radius);
+    padding: 20px; border: 1px solid var(--border); text-align: center;
+  }
+  .thermo-card .thermo-temp {
+    font-size: 48px; font-weight: 300; letter-spacing: -2px;
+    color: var(--accent); line-height: 1;
+  }
+  .thermo-card .thermo-temp .deg { font-size: 22px; font-weight: 400; vertical-align: super; }
+  .thermo-card .thermo-label { font-size: 13px; color: var(--text-muted); margin: 6px 0 14px; }
+  .thermo-card .thermo-target { font-size: 14px; color: var(--text-secondary); margin-bottom: 14px; }
+  .thermo-card .thermo-controls { display: flex; justify-content: center; gap: 8px; }
+  .thermo-card .thermo-controls button {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid var(--border); background: rgba(255,255,255,0.04);
+    color: var(--text-primary); font-size: 16px; cursor: pointer;
+    transition: all var(--transition); display: flex; align-items: center; justify-content: center;
+  }
+  .thermo-card .thermo-controls button:hover { background: rgba(255,255,255,0.08); border-color: var(--accent); color: var(--accent); }
+  .thermo-card .mode-badge {
+    display: inline-block; padding: 3px 12px; border-radius: 12px;
+    font-size: 11px; font-weight: 500; margin-top: 12px;
+  }
+
+  .bill-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 22px; }
+  .bill-card {
+    background: var(--bg-card); border-radius: var(--radius);
+    padding: 18px; border: 1px solid var(--border);
+  }
+  .bill-card .bill-amount { font-size: 30px; font-weight: 650; letter-spacing: -0.5px; margin-bottom: 4px; }
+  .bill-card .bill-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+  .bill-card .bill-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 6px; }
+  .bill-card .bill-bar .fill { height: 100%; border-radius: 2px; background: var(--accent); }
+
+  .cctv-summary { display: flex; gap: 14px; margin-bottom: 18px; }
+  .cctv-summary .cs-card {
+    flex: 1; background: var(--bg-card); border-radius: var(--radius);
+    padding: 16px; border: 1px solid var(--border);
+  }
+  .cctv-summary .cs-card .cs-value { font-size: 22px; font-weight: 650; }
+  .cctv-summary .cs-card .cs-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  @media (max-width: 1100px) {
+    .overview-grid { grid-template-columns: repeat(2, 1fr); }
+    .chart-grid { grid-template-columns: 1fr; }
+    .roborock-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .header { padding: 14px 16px; }
+    .content { padding: 14px 16px 30px; }
+    .overview-grid { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: 1fr; }
+    .bill-grid { grid-template-columns: 1fr; }
+  }
+  .text-green { color: var(--green); }
+  .text-red { color: var(--red); }
+  .text-amber { color: var(--amber); }
+  .text-muted { color: var(--text-muted); }
+  .mt-2 { margin-top: 8px; }
+  .flex-between { display: flex; justify-content: space-between; align-items: center; }
+  .gap-2 { gap: 8px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo"><i class="fas fa-house-signal"></i></div>
+    <div>
+      <h2>TriveniVenkat's<br>Home Dashboard</h2>
+      <div class="sub">All-in-one smart home view</div>
+    </div>
+  </div>
+  <div class="nav-section">Overview</div>
+  <button class="nav-item active" data-section="overview">
+    <i class="fas fa-th-large"></i> Home Overview
+  </button>
+  <div class="nav-section">Home</div>
+  <button class="nav-item" data-section="appliances">
+    <i class="fas fa-microchip"></i> Home Appliances
+  </button>
+  <button class="nav-item" data-section="thermostats">
+    <i class="fas fa-thermometer-half"></i> Thermostats
+  </button>
+  <div class="nav-section">Utilities</div>
+  <button class="nav-item" data-section="electricity">
+    <i class="fas fa-bolt"></i> Electricity
+  </button>
+  <button class="nav-item" data-section="water">
+    <i class="fas fa-tint"></i> Water
+  </button>
+  <div class="nav-section">Security</div>
+  <button class="nav-item" data-section="cctv">
+    <i class="fas fa-video"></i> CCTV &amp; Security
+    <span class="badge" id="cctv-badge">3 live</span>
+  </button>
+  <button class="nav-item" data-section="roborock">
+    <i class="fas fa-robot"></i> Roborock
+  </button>
+  <div class="sidebar-footer">
+    System online · 7 devices connected<br>
+    Updated just now
+  </div>
+</aside>
+
+<div class="main">
+  <header class="header">
+    <div class="header-left">
+      <h1 id="section-title">Home Overview</h1>
+      <div class="date-time" id="date-time"></div>
+    </div>
+    <div class="header-right">
+      <div class="header-status">
+        <span class="status-dot green" id="home-status-dot"></span>
+        <span id="home-status-text">All systems nominal</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="content" id="content">
+
+    <!-- HOME OVERVIEW -->
+    <div class="section active" id="section-overview">
+      <div class="section-title"><i class="fas fa-house"></i> Home Overview</div>
+      <div class="overview-grid">
+        <div class="overview-card">
+          <div class="label">Current Power</div>
+          <div class="value"><span id="ov-power">1.24</span> <span style="font-size:14px;color:var(--text-muted)">kW</span></div>
+          <div class="sub"><i class="fas fa-arrow-up trend-up"></i> 8% from last hour</div>
+        </div>
+        <div class="overview-card">
+          <div class="label">Indoor Temperature</div>
+          <div class="value"><span id="ov-temp">22.4</span><span style="font-size:14px;color:var(--text-muted)">°C</span></div>
+          <div class="sub"><i class="fas fa-thermometer-half"></i> Target: 22°C · Living Room</div>
+        </div>
+        <div class="overview-card">
+          <div class="label">Water Usage Today</div>
+          <div class="value"><span id="ov-water">187</span> <span style="font-size:14px;color:var(--text-muted)">L</span></div>
+          <div class="sub"><i class="fas fa-arrow-down trend-down"></i> 12% below average</div>
+        </div>
+        <div class="overview-card">
+          <div class="label">Security Status</div>
+          <div class="value" style="font-size:20px"><i class="fas fa-shield-halved text-green"></i> Secure</div>
+          <div class="sub"><i class="fas fa-check-circle"></i> 5 cameras active · No alerts</div>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="icon blue"><i class="fas fa-plug"></i></div>
+          <div class="info"><div class="title">Appliances Online</div><div class="desc">8 <span class="highlight">of 9</span> connected</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="icon amber"><i class="fas fa-robot"></i></div>
+          <div class="info"><div class="title">Roborock</div><div class="desc">Docked · <span class="highlight">78%</span> battery</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="icon cyan"><i class="fas fa-clock"></i></div>
+          <div class="info"><div class="title">Next Cleaning</div><div class="desc">Tomorrow, <span class="highlight">10:00 AM</span></div></div>
+        </div>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-card">
+          <div class="card-header"><h3>Power Consumption — Last 24 Hours</h3><span class="chip" id="power-now-chip">1.24 kW now</span></div>
+          <div class="chart-wrap"><canvas id="chart-power"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-header"><h3>Water Usage — Last 7 Days</h3><span class="chip" id="water-now-chip">187 L today</span></div>
+          <div class="chart-wrap"><canvas id="chart-water"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPLIANCES -->
+    <div class="section" id="section-appliances">
+      <div class="section-title"><i class="fas fa-microchip"></i> Home Appliances</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <span style="font-size:13px;color:var(--text-secondary)" id="appliance-count">8 of 9 online</span>
+        <label style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px;cursor:pointer">
+          <input type="checkbox" id="filter-offline" style="accent-color:var(--accent)"> Show offline
+        </label>
+      </div>
+      <div class="appliance-grid" id="appliance-grid"></div>
+    </div>
+
+    <!-- ELECTRICITY -->
+    <div class="section" id="section-electricity">
+      <div class="section-title"><i class="fas fa-bolt"></i> Electricity</div>
+      <div class="stat-row">
+        <div class="stat-card"><div class="icon blue"><i class="fas fa-bolt"></i></div><div class="info"><div class="title">Current Consumption</div><div class="desc"><span class="highlight" id="elec-now">1.24</span> kW</div></div></div>
+        <div class="stat-card"><div class="icon amber"><i class="fas fa-clock"></i></div><div class="info"><div class="title">Today's Usage</div><div class="desc"><span class="highlight" id="elec-today">28.4</span> kWh</div></div></div>
+        <div class="stat-card"><div class="icon green"><i class="fas fa-dollar-sign"></i></div><div class="info"><div class="title">Current Rate</div><div class="desc">$0.12<span style="color:var(--text-muted);font-weight:400">/kWh</span></div></div></div>
+      </div>
+      <div class="bill-grid">
+        <div class="bill-card">
+          <div class="card-header" style="margin-bottom:6px"><h3>Latest Bill</h3></div>
+          <div class="bill-amount">$142.80</div>
+          <div class="bill-meta">August 2026 · 236 kWh used<br>Due: 15 September 2026</div>
+          <div class="bill-bar"><div class="fill" style="width:62%"></div></div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px">62% of typical monthly usage</div>
+        </div>
+        <div class="bill-card">
+          <div class="card-header" style="margin-bottom:6px"><h3>Previous Bill</h3></div>
+          <div class="bill-amount" style="color:var(--text-secondary)">$128.45</div>
+          <div class="bill-meta">July 2026 · 211 kWh used<br>Paid: 14 July 2026</div>
+          <div class="bill-bar"><div class="fill" style="width:54%;background:var(--text-muted)"></div></div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px">+11.2% vs previous month</div>
+        </div>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-card">
+          <div class="card-header"><h3>Daily Usage — Last 30 Days</h3><span class="chip">kWh/day</span></div>
+          <div class="chart-wrap"><canvas id="chart-elec-daily"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-header"><h3>Hourly Breakdown — Today</h3><span class="chip" id="elec-peak-chip">Peak: 2.1 kW at 7PM</span></div>
+          <div class="chart-wrap"><canvas id="chart-elec-hourly"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WATER -->
+    <div class="section" id="section-water">
+      <div class="section-title"><i class="fas fa-tint"></i> Water</div>
+      <div class="stat-row">
+        <div class="stat-card"><div class="icon cyan"><i class="fas fa-tint"></i></div><div class="info"><div class="title">Current Flow</div><div class="desc"><span class="highlight" id="water-now">0.0</span> L/min</div></div></div>
+        <div class="stat-card"><div class="icon blue"><i class="fas fa-clock"></i></div><div class="info"><div class="title">Today's Usage</div><div class="desc"><span class="highlight" id="water-today">187</span> L</div></div></div>
+        <div class="stat-card"><div class="icon green"><i class="fas fa-dollar-sign"></i></div><div class="info"><div class="title">Rate</div><div class="desc">$0.0037<span style="color:var(--text-muted);font-weight:400">/L</span></div></div></div>
+      </div>
+      <div class="bill-grid">
+        <div class="bill-card">
+          <div class="card-header" style="margin-bottom:6px"><h3>Latest Bill</h3></div>
+          <div class="bill-amount">$62.10</div>
+          <div class="bill-meta">August 2026 · 16,780 L used<br>Due: 15 September 2026</div>
+          <div class="bill-bar"><div class="fill" style="width:48%"></div></div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px">48% of typical monthly usage</div>
+        </div>
+        <div class="bill-card">
+          <div class="card-header" style="margin-bottom:6px"><h3>Previous Bill</h3></div>
+          <div class="bill-amount" style="color:var(--text-secondary)">$58.90</div>
+          <div class="bill-meta">July 2026 · 15,920 L used<br>Paid: 14 July 2026</div>
+          <div class="bill-bar"><div class="fill" style="width:44%;background:var(--text-muted)"></div></div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px">+5.4% vs previous month</div>
+        </div>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-card">
+          <div class="card-header"><h3>Daily Usage — Last 30 Days</h3><span class="chip">L/day</span></div>
+          <div class="chart-wrap"><canvas id="chart-water-daily"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-header"><h3>Weekly Average</h3><span class="chip">Last 12 weeks</span></div>
+          <div class="chart-wrap"><canvas id="chart-water-weekly"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CCTV & SECURITY -->
+    <div class="section" id="section-cctv">
+      <div class="section-title"><i class="fas fa-video"></i> CCTV &amp; Security <span style="font-size:11px;color:var(--text-muted);font-weight:400;margin-left:6px">· Eufy HomeCenter</span></div>
+      <div class="cctv-summary">
+        <div class="cs-card"><div class="cs-value" style="color:var(--green)">5<span style="font-size:13px;color:var(--text-muted)"> / 5</span></div><div class="cs-label">Cameras Online</div></div>
+        <div class="cs-card"><div class="cs-value" style="color:var(--green)">No Alerts</div><div class="cs-label">Last 24 hours</div></div>
+        <div class="cs-card"><div class="cs-value" style="color:var(--green)">Armed</div><div class="cs-label">Security system</div></div>
+      </div>
+      <div class="cctv-grid" id="cctv-grid"></div>
+      <div style="margin-top:18px;background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);padding:16px">
+        <div class="flex-between" style="margin-bottom:10px">
+          <span style="font-size:13px;font-weight:550"><i class="fas fa-shield-halved" style="color:var(--green);margin-right:6px"></i>System Status</span>
+          <span style="font-size:12px;color:var(--text-muted)">Last event: 3 hours ago</span>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--text-secondary)">
+          <span><i class="fas fa-check-circle" style="color:var(--green)"></i> Motion detection: <strong style="color:var(--text-primary)">Enabled</strong></span>
+          <span><i class="fas fa-check-circle" style="color:var(--green)"></i> Entry sensors: <strong style="color:var(--text-primary)">4 active</strong></span>
+          <span><i class="fas fa-check-circle" style="color:var(--green)"></i> Alarm: <strong style="color:var(--text-primary)">Disarmed</strong></span>
+          <span><i class="fas fa-check-circle" style="color:var(--green)"></i> Cloud storage: <strong style="color:var(--text-primary)">7 days</strong></span>
+        </nbsp>
+      </div>
+    </div>
+
+    <!-- ROBOROCK -->
+    <div class="section" id="section-roborock">
+      <div class="section-title"><i class="fas fa-robot"></i> Roborock S8 Pro</div>
+      <div class="roborock-grid">
+        <div class="detail-card">
+          <div class="dc-title">Vacuum Status</div>
+          <div class="detail-row"><span class="dr-label">Status</span><span class="dr-value text-green"><i class="fas fa-circle" style="font-size:8px;margin-right:5px"></i> Docked &amp; Charging</span></div>
+          <div class="detail-row"><span class="dr-label">Battery</span><span class="dr-value">78%<div class="battery-bar"><div class="fill green" style="width:78%"></div></div></span></div>
+          <div class="detail-row"><span class="dr-label">Dust Bin</span><span class="dr-value">Empty · 0% full</span></div>
+          <div class="detail-row"><span class="dr-label">Water Tank</span><span class="dr-value">Full · 100%</span></div>
+          <div class="detail-row"><span class="dr-label">Wi-Fi Signal</span><span class="dr-value">Strong · -42 dBm</span></div>
+          <div class="detail-row"><span class="dr-label">Firmware</span><span class="dr-value">v4.2.1 · Up to date</span></div>
+        </div>
+        <div class="detail-card">
+          <div class="dc-title">Cleaning Summary</div>
+          <div class="detail-row"><span class="dr-label">Last Cleaned</span><span class="dr-value">Yesterday, 4:32 PM</span></div>
+          <div class="detail-row"><span class="dr-label">Area Covered</span><span class="dr-value">48.2 m²</span></div>
+          <div class="detail-row"><span class="dr-label">Duration</span><span class="dr-value">1h 23m</span></div>
+          <div class="detail-row"><span class="dr-label">Mode</span><span class="dr-value">Deep Clean · Suction Max</span></div>
+          <div class="detail-row"><span class="dr-label">Water Used</span><span class="dr-value">210 mL (mopping)</span></div>
+          <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+            <button id="roborock-start" style="width:100%;padding:10px;border-radius:var(--radius-sm);border:1px solid var(--accent);background:rgba(59,130,246,0.1);color:var(--accent);font-size:13px;cursor:pointer;font-family:inherit;font-weight:500;transition:all var(--transition)">Start Cleaning Now</button>
+          </div>
+        </div>
+      </div>
+      <div class="roborock-grid">
+        <div class="detail-card">
+          <div class="dc-title">Cleaning Schedule</div>
+          <div class="schedule-item"><span class="day-dot"></span> Monday — 10:00 AM · Whole House</div>
+          <div class="schedule-item"><span class="day-dot"></span> Wednesday — 10:00 AM · Living Room + Kitchen</div>
+          <div class="schedule-item"><span class="day-dot"></span> Friday — 10:00 AM · Bedrooms</div>
+          <div class="schedule-item"><span class="day-dot" style="background:var(--text-muted)"></span> Saturday — 2:00 PM · Deep Clean (entire home)</div>
+          <div style="margin-top:12px;font-size:12px;color:var(--text-muted)">4 of 7 days scheduled · <span style="color:var(--accent);cursor:pointer;text-decoration:underline">Edit schedule</span></div>
+        </div>
+        <div class="detail-card">
+          <div class="dc-title">Recent Cleaning History</div>
+          <div class="clean-history">
+            <div class="history-item"><span>Yesterday, 4:32 PM</span><span class="hi-time">48.2 m²</span></div>
+            <div class="history-item"><span>2 days ago, 10:05 AM</span><span class="hi-time">23.6 m²</span></div>
+            <div class="history-item"><span>3 days ago, 9:58 AM</span><span class="hi-time">18.1 m²</span></div>
+            <div class="history-item"><span>5 days ago, 4:15 PM</span><span class="hi-time">52.0 m²</span></div>
+            <div class="history-item"><span>1 week ago, 10:02 AM</span><span class="hi-time">31.4 m²</span></div>
+            <div class="history-item"><span>1 week ago, 2:30 PM</span><span class="hi-time">61.7 m²</span></div>
+            <div class="history-item"><span>2 weeks ago, 10:00 AM</span><span class="hi-time">29.8 m²</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- THERMOSTATS -->
+    <div class="section" id="section-thermostats">
+      <div class="section-title"><i class="fas fa-thermometer-half"></i> Thermostats</div>
+      <div class="thermo-grid" id="thermo-grid"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ===== NAVIGATION =====
+const navItems = document.querySelectorAll('.nav-item');
+const sections = {
+  overview: document.getElementById('section-overview'),
+  appliances: document.getElementById('section-appliances'),
+  electricity: document.getElementById('section-electricity'),
+  water: document.getElementById('section-water'),
+  cctv: document.getElementById('section-cctv'),
+  roborock: document.getElementById('section-roborock'),
+  thermostats: document.getElementById('section-thermostats'),
+};
+const sectionTitleMap = {
+  overview: 'Home Overview', appliances: 'Home Appliances',
+  electricity: 'Electricity', water: 'Water',
+  cctv: 'CCTV & Security', roborock: 'Roborock', thermostats: 'Thermostats'
+};
+navItems.forEach(btn => {
+  btn.addEventListener('click', () => {
+    navItems.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const sec = btn.dataset.section;
+    Object.entries(sections).forEach(([k, el]) => {
+      el.classList.toggle('active', k === sec);
+    });
+    document.getElementById('section-title').textContent = sectionTitleMap[sec] || sec;
+  });
+});
+
+// ===== DATE/TIME =====
+function updateClock() {
+  const now = new Date();
+  const opts = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+  document.getElementById('date-time').innerHTML = now.toLocaleDateString('en-US', opts) + ' · ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+}
+updateClock();
+setInterval(updateClock, 30000);
+
+// ===== APPLIANCE DATA & RENDER =====
+const appliances = [
+  { id:'smart-plug-1', name:'Living Room Lamp', icon:'fa-lightbulb', iconColor:'#fbbf24', status:'online', state:true, type:'toggle', consumption:0.04 },
+  { id:'smart-plug-2', name:'Kitchen Strip Lights', icon:'fa-lightbulb', iconColor:'#fbbf24', status:'online', state:true, type:'toggle', consumption:0.06 },
+  { id:'ac-living', name:'Living Room AC', icon:'fa-snowflake', iconColor:'#3b82f6', status:'online', state:true, type:'climate', temp:22, target:22, consumption:1.8, mode:'cool' },
+  { id:'ac-bedroom', name:'Bedroom AC', icon:'fa-snowflake', iconColor:'#3b82f6', status:'online', state:false, type:'climate', temp:20, target:21, consumption:0, mode:'off' },
+  { id:'dehumidifier', name:'Basement Dehumidifier', icon:'fa-droplet', iconColor:'#8b5cf6', status:'online', state:true, type:'toggle', consumption:0.28, mode:'auto' },
+  { id:'washer', name:'Washer/Dryer', icon:'fa-shirt', iconColor:'#22c55e', status:'online', state:false, type:'toggle', consumption:0, running:false },
+  { id:'smart-oven', name:'Smart Oven', icon:'fa-oven', iconColor:'#f97316', status:'online', state:false, type:'toggle', consumption:0 },
+  { id:'doorbell', name:'Front Door Bell Camera', icon:'fa-door-open', iconColor:'#ef4444', status:'online', state:true, type:'sensor', consumption:0.02 },
+  { id:'soundbar', name:'Living Room Soundbar', icon:'fa-volume-high', iconColor:'#ec4899', status:'offline', state:false, type:'toggle', consumption:0 },
+];
+const applianceGrid = document.getElementById('appliance-grid');
+function renderAppliances(filterOffline) {
+  const visible = filterOffline ? appliances : appliances.filter(a => a.status === 'online');
+  applianceGrid.innerHTML = visible.map(a => {
+    const statusClass = a.status === 'online' ? 'online' : 'offline';
+    const statusText = a.status === 'online' ? (a.state ? 'Running' : 'Standby') : 'Offline';
+    let body = '';
+    if (a.type === 'climate') {
+      const activeClass = a.state ? 'active' : '';
+      body = `
+        <div class="app-status">Mode: ${a.mode} · ${a.temp}°C</div>
+        <div class="app-value">${a.state ? a.temp : '--'}<span class="unit">°C</span></div>
+        <div class="controls">
+          <div class="toggle-switch ${activeClass}" data-id="${a.id}"></div>
+          <span style="font-size:11px;color:var(--text-muted);align-self:center">Target ${a.target}°C</span>
+        </div>`;
+    } else if (a.type === 'sensor') {
+      body = `
+        <div class="app-status">Active · No motion</div>
+        <div class="app-value" style="font-size:16px"><i class="fas fa-check-circle text-green"></i></div>
+        <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">${a.consumption.toFixed(2)} W · Idle</div>`;
+    } else {
+      const activeClass = a.state ? 'active' : '';
+      const showControls = a.status === 'online';
+      body = `
+        <div class="app-status">${a.state ? (a.running ? 'Running · ' + a.consumption.toFixed(1) + ' kW' : 'Standby · ' + a.consumption.toFixed(2) + ' kW') : 'Offline'}</div>
+        <div class="app-value">${a.state ? (a.running ? '1' : '0') : '--'}</div>
+        <div class="controls" ${showControls ? '' : 'style="opacity:0.3;pointer-events:none"'}>
+          <div class="toggle-switch ${a.state ? 'on' : ''}" data-id="${a.id}"></div>
+          <button class=" ${a.state ? 'active' : ''}" data-id="${a.id}" data-action="toggle">${a.state ? 'On' : 'Off'}</button>
+        </div>`;
+    }
+    return `<div class="appliance-card ${statusClass}">
+      <div class="app-head">
+        <div class="app-icon" style="background:${a.iconColor}22;color:${a.iconColor}"><i class="fas ${a.icon}"></i></div>
+        <div><div class="app-name">${a.name}</div></div>
+      </div>
+      ${body}
+    </div>`;
+  }).join('');
+  document.getElementById('appliance-count').textContent = `${appliances.filter(a=>a.status==='online').length} of ${appliances.length} online`;
+}
+renderAppliances(false);
+
+// Toggle handlers
+applianceGrid.addEventListener('click', (e) => {
+  const target = e.target.closest('[data-id]');
+  if (!target) return;
+  const id = target.dataset.id;
+  const a = appliances.find(x => x.id === id);
+  if (!a) return;
+  if (target.classList.contains('toggle-switch')) {
+    a.state = !a.state;
+    if (a.type === 'climate') {
+      a.temp = a.state ? a.target : 0;
+    }
+  } else if (target.dataset.action === 'toggle') {
+    a.state = !a.state;
+    if (!a.state && a.type === 'toggle') a.consumption = 0;
+    if (a.state && a.type === 'toggle' && !a.running) a.consumption = a.consumption > 0 ? a.consumption : 0.5;
+  }
+  renderAppliances(document.getElementById('filter-offline').checked);
+});
+
+document.getElementById('filter-offline').addEventListener('change', (e) => {
+  renderAppliances(e.target.checked);
+});
+
+// ===== CLIMATE/TOGGLE DATA HELPER =====
+function updateFromAppliance(id) {
+  const a = appliances.find(x => x.id === id);
+  if (!a) return null;
+  return a;
+}
+
+// ===== CHARTS =====
+const chartDefaults = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      backgroundColor: '#1a1e28', titleColor: '#e8eaed', bodyColor: '#9aa0a6',
+      borderColor: '#1e293b', borderWidth: 1, cornerRadius: 8, padding: 10,
+      callbacks: { label: (ctx) => ctx.parsed.y + (ctx.dataset.label === 'kW' ? ' kW' : ' kWh') }
+    }
+  },
+  scales: {
+    x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#5f6368', font: { size: 10 } } },
+    y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#5f6368', font: { size: 10 }, callback: (v) => v + (v > 0 && true ? '' : '') } }
+  }
+};
+
+// Power chart (24h)
+const powerCtx = document.getElementById('chart-power').getContext('2d');
+const now = new Date(); const hrs = [];
+for (let i = 23; i >= 0; i--) { const d = new Date(now - i*3600000); hrs.push(d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})); }
+const powerData = hrs.map((_, i) => 0.8 + Math.sin(i/4) * 0.6 + Math.random() * 0.25);
+if (powerData.length) powerData[powerData.length-1] = 1.24;
+const chartPower = new Chart(powerCtx, {
+  type: 'line',
+  data: {
+    labels: hrs,
+    datasets: [{
+      label: 'kW', data: powerData, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.08)',
+      fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2,
+    }]
+  },
+  options: {
+    ...chartDefaults,
+    scales: {
+      ...chartDefaults.scales,
+      y: { ...chartDefaults.scales.y, min: 0, max: 3, ticks: { ...chartDefaults.scales.y.ticks, callback: (v) => v + ' kW' } }
+    }
+  }
+});
+
+// Water chart (7 days)
+const waterCtx = document.getElementById('chart-water').getContext('2d');
+const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const waterData = days.map((_, i) => 140 + Math.sin(i/3) * 40 + Math.random() * 20);
+waterData[waterData.length-1] = 187;
+const chartWater = new Chart(waterCtx, {
+  type: 'bar',
+  data: {
+    labels: days,
+    datasets: [{
+      label: 'L', data: waterData, backgroundColor: 'rgba(6,182,212,0.5)',
+      borderColor: '#06b6d4', borderWidth: 1.5, borderRadius: 4,
+    }]
+  },
+  options: {
+    ...chartDefaults,
+    scales: {
+      x: chartDefaults.scales.x,
+      y: { ...chartDefaults.scales.y, min: 0, max: 250, ticks: { ...chartDefaults.scales.y.ticks, callback: (v) => v + ' L' } }
+    }
+  }
+});
+
+// Electricity daily (30 days)
+const elecDailyCtx = document.getElementById('chart-elec-daily').getContext('2d');
+const elecDays = [];
+for (let i = 29; i >= 0; i--) { const d = new Date(now - i*86400000); elecDays.push(d.toLocaleDateString('en-US',{month:'short',day:'numeric'})); }
+const elecDailyData = elecDays.map((_, i) => 7 + Math.sin(i/8) * 3 + Math.random() * 2.5);
+const chartElecDaily = new Chart(elecDailyCtx, {
+  type: 'bar',
+  data: { labels: elecDays, datasets: [{ label: 'kWh', data: elecDailyData, backgroundColor: 'rgba(59,130,246,0.4)', borderColor: '#3b82f6', borderWidth: 1, borderRadius: 3 }] },
+  options: {
+    ...chartDefaults,
+    scales: {
+      x: { ...chartDefaults.scales.x, ticks: { ...chartDefaults.scales.x.ticks, maxTicksLimit: 8 } },
+      y: { ...chartDefaults.scales.y, min: 0, max: 15, ticks: { ...chartDefaults.scales.y.ticks, callback: (v) => v + ' kWh' } }
+    }
+  }
+});
+
+// Electricity hourly (today)
+const elecHourlyCtx = document.getElementById('chart-elec-hourly').getContext('2d');
+const hours = [];
+for (let i = 0; i < 24; i++) hours.push(i + ':00');
+const hourlyBase = [0.3,0.2,0.2,0.2,0.3,0.5,0.8,1.4,1.6,1.5,1.2,1.3,1.4,1.5,1.6,1.8,1.7,1.5,1.4,1.2,1.0,0.8,0.5,0.3];
+const elecHourlyData = hourlyBase.map(v => v + (Math.random()-0.5)*0.2);
+elecHourlyData[elecHourlyData.length-1] = 1.24;
+const chartElecHourly = new Chart(elecHourlyCtx, {
+  type: 'line',
+  data: { labels: hours, datasets: [{ label: 'kW', data: elecHourlyData, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.06)', fill: true, tension: 0.3, pointRadius: 0, borderWidth: 2 }] },
+  options: {
+    ...chartDefaults,
+    scales: {
+      x: { ...chartDefaults.scales.x, ticks: { ...chartDefaults.scales.x.ticks, maxTicksLimit: 8 } },
+      y: { ...chartDefaults.scales.y, min: 0, max: 3, ticks: { ...chartDefaults.scales.y.ticks, callback: (v) => v + ' kW' } }
+    }
+  }
+});
+
+// Water daily (30 days)
+const waterDailyCtx = document.getElementById('chart-water-daily').getContext('2d');
+const waterDailyData = elecDays.map((_, i) => 400 + Math.sin(i/8) * 120 + Math.random() * 80);
+waterDailyData[waterDailyData.length-1] = 187;
+const chartWaterDaily = new Chart(waterDailyCtx, {
+  type: 'bar',
+  data: { labels: elecDays, datasets: [{ label: 'L', data: waterDailyData, backgroundColor: 'rgba(6,182,212,0.4)', borderColor: '#06b6d4', borderWidth: 1, borderRadius: 3 }] },
+  options: {
+    ...chartDefaults,
+    scales: {
+      x: { ...chartDefaults.scales.x, ticks: { ...chartDefaults.scales.x.ticks, maxTicksLimit: 8 } },
+      y: { ...chartDefaults.scales.y, min: 0, max: 700, ticks: { ...chartDefaults.scales.y.ticks, callback: (v) => v + ' L' } }
+    }
+  }
+});
+
+// Water weekly (12 weeks)
+const waterWeeklyCtx = document.getElementById('chart-water-weekly').getContext('2d');
+const weekLabels = [];
+for (let i = 11; i >= 0; i--) { const d = new Date(now - i*604800000); weekLabels.push(d.toLocaleDateString('en-US',{month:'short',day:'numeric'})); }
+const waterWeeklyData = weekLabels.map((_, i) => 1100 + Math.sin(i/4) * 200 + Math.random() * 150);
+waterWeeklyData[waterWeeklyData.length - 1] = 1309;
+const chartWaterWeekly = new Chart(waterWeeklyCtx, {
+  type: 'line',
+  data: { labels: weekLabels, datasets: [{ label: 'L', data: waterWeeklyData, borderColor: '#06b6d4', backgroundColor: 'rgba(6,182,212,0.08)', fill: true, tension: 0.3, pointRadius: 3, pointBackgroundColor: '#06b6d4', borderWidth: 2 }] },
+  options: {
+    ...chartDefaults,
+    scales: {
+      x: { ...chartDefaults.scales.x, ticks: { ...chartDefaults.scales.x.ticks, maxTicksLimit: 6 } },
+      y: { ...chartDefaults.scales.y, min: 800, max: 1600, ticks: { ...chartDefaults.scales.y.ticks, callback: (v) => v + ' L' } }
+    }
+  }
+});
+
+// ===== THERMOSTATS =====
+const thermostats = [
+  { name:'Living Room', temp:22.4, target:22, mode:'cool', hvac:'on', icon:'fa-bed', floor:'1st Floor', range:'7.5–35°C' },
+  { name:'Bedroom', temp:20.1, target:21, mode:'cool', hvac:'on', icon:'fa-bed', floor:'2nd Floor', range:'7.5–35°C' },
+  { name:'Basement', temp:18.6, target:19, mode:'off', hvac:'off', icon:'fa-basement', floor:'Lower Level', range:'5–30°C' },
+  { name:'Office', temp:23.0, target:22, mode:'cool', hvac:'on', icon:'fa-desktop', floor:'1st Floor', range:'7.5–35°C' },
+];
+const thermoGrid = document.getElementById('thermo-grid');
+function renderThermostats() {
+  thermoGrid.innerHTML = thermostats.map(t => {
+    const hvacColor = t.hvac === 'on' ? 'var(--green)' : 'var(--text-muted)';
+    const modeColors = { cool:'var(--accent)', heat:'var(--red)', dry:'var(--amber)', fan:'var(--cyan)', off:'var(--text-muted)' };
+    const modeColor = modeColors[t.mode] || 'var(--text-muted)';
+    return `<div class="thermo-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:12px;color:var(--text-muted)">${t.floor}</span>
+        <span style="font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(255,255,255,0.05);color:var(--text-secondary)">${t.range}</span>
+      </div>
+      <div class="thermo-temp">${t.temp}<span class="deg">°C</span></div>
+      <div class="thermo-label"><i class="fas ${t.icon}"></i> ${t.name}</div>
+      <div class="thermo-target">Target: <strong style="color:var(--text-primary)">${t.target}°C</strong> · Mode: <span style="color:${modeColor}">${t.mode}</span></div>
+      <div class="thermo-controls">
+        <button data-thermo="${t.name}" data-dir="-1"><i class="fas fa-minus"></i></button>
+        <button data-thermo="${t.name}" data-dir="0"><i class="fas fa-temperature-half"></i></button>
+        <button data-thermo="${t.name}" data-dir="1"><i class="fas fa-plus"></i></button>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:var(--text-muted)">
+        HVAC: <span style="color:${hvacColor}">${t.hvac === 'on' ? 'Running' : 'Off'}</span>
+      </div>
+      <span class="mode-badge" style="background:${modeColor}18;color:${modeColor}">${t.mode.toUpperCase()}</span>
+    </div>`;
+  }).join('');
+}
+renderThermostats();
+
+thermoGrid.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-thermo]');
+  if (!btn) return;
+  const name = btn.dataset.thermo;
+  const dir = parseInt(btn.dataset.dir);
+  const t = thermostats.find(x => x.name === name);
+  if (!t) return;
+  if (dir === 0) return;
+  const step = 0.5;
+  let newTarget = t.target + step * dir;
+  newTarget = Math.max(10, Math.min(30, Math.round(newTarget * 2) / 2));
+  // If mode is off, turn on cooling when adjusting
+  if (t.mode === 'off') {
+    t.mode = 'cool';
+    t.hvac = 'on';
+  }
+  t.target = newTarget;
+  if (t.temp < newTarget + 1 && t.temp > newTarget - 1) {
+    t.temp = newTarget;
+  } else {
+    t.temp += (newTarget > t.temp ? 0.1 : -0.1);
+    t.temp = Math.round(t.temp * 10) / 10;
+  }
+  renderThermostats();
+  updateOverview();
+});
+
+// ===== CCTV =====
+const cams = [
+  { name:'Front Door Cam', loc:'Entrance · Outside', live:true, clear:true, time:'Live', rec:true },
+  { name:'Backyard Cam', loc:'Garden · Rear', live:true, clear:true, time:'Live', rec:true },
+  { name:'Garage Cam', loc:'Garage · Side Entry', live:true, clear:true, time:'Live', rec:true },
+  { name:'Living Room Cam', loc:'Interior · Main Room', live:false, clear:true, time:'06:42 PM', rec:false },
+  { name:'Hallway Cam', loc:'Interior · Upper Hall', live:false, clear:true, time:'05:18 PM', rec:false },
+];
+const cctvGrid = document.getElementById('cctv-grid');
+cctvGrid.innerHTML = cams.map(c => `
+  <div class="cam-card">
+    <div class="cam-header">
+      <div class="cam-info">
+        <span class="cam-name">${c.name}</span>
+        <span class="cam-loc"><i class="fas fa-location-dot"></i> ${c.loc}</span>
+      </div>
+      <span class="cam-badge ${c.live ? 'live' : 'clear'}">${c.live ? 'LIVE' : 'CLEAR'}</span>
+    </div>
+    <div class="cam-view">
+      <div class="cam-placeholder">
+        <i class="fas ${c.live ? 'fa-video' : 'fa-image'}"></i>
+        <div>${c.live ? 'Eufy Camera · Streaming' : 'Last captured: ' + c.time}</div>
+      </div>
+      ${c.rec ? '<div class="rec-indicator"></div>' : ''}
+    </div>
+    <div class="cam-footer">
+      <span><i class="fas fa-${c.live ? 'video' : 'camera'}" style="margin-right:4px"></i>${c.live ? 'Recording' : 'Idle'}</span>
+      <span class="cam-time">${c.time}</span>
+    </div>
+  </div>
+`).join('');
+
+// ===== LIVE UPDATES =====
+function updateOverview() {
+  // Compute total power
+  const totalPower = appliances.reduce((sum, a) => {
+    if (a.status !== 'online' || !a.state) return sum;
+    if (a.type === 'climate') return a.state ? sum + (a.consumption || 1.5) : sum;
+    return sum + (a.consumption || 0);
+  }, 0);
+  document.getElementById('ov-power').textContent = totalPower.toFixed(2);
+
+  // Indoor temp from living room thermostat
+  const living = thermostats.find(t => t.name === 'Living Room');
+  if (living) {
+    document.getElementById('ov-temp').textContent = living.temp.toFixed(1);
+  }
+
+  // Water update
+  const waterVal = 187 + (Math.random() - 0.5) * 6;
+  document.getElementById('ov-water').textContent = Math.round(waterVal);
+}
+
+// Simulate live data changes every 5 seconds
+setInterval(() => {
+  // Nudge power chart
+  const lastIdx = chartPower.data.labels.length - 1;
+  if (chartPower.data.labels.length) {
+    const newVal = 0.9 + Math.random() * 0.8;
+    chartPower.data.datasets[0].data.push(newVal);
+    chartPower.data.labels.push(new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}));
+    if (chartPower.data.labels.length > 24) {
+      chartPower.data.labels.shift();
+      chartPower.data.datasets[0].data.shift();
+    }
+    chartPower.update('none');
+  }
+  document.getElementById('power-now-chip').textContent = newVal.toFixed(2) + ' kW now';
+  document.getElementById('elec-now').textContent = newVal.toFixed(2);
+  document.getElementById('ov-power').textContent = newVal.toFixed(2);
+
+  // Nudge water
+  const wVal = Math.round(180 + Math.random() * 20);
+  document.getElementById('water-now-chip').textContent = wVal + ' L today';
+  document.getElementById('water-today').textContent = wVal;
+  document.getElementById('ov-water').textContent = wVal;
+
+  // Nudge daily electricity
+  const eVal = (27 + Math.random() * 3).toFixed(1);
+  document.getElementById('elec-today').textContent = eVal;
+  document.getElementById('elec-peak-chip').textContent = 'Peak: ' + (1.8 + Math.random() * 0.5).toFixed(1) + ' kW at ' + (18 + Math.floor(Math.random()*4)) + 'PM';
+
+  // Random appliance flickers for realism
+  if (Math.random() > 0.85) {
+    const idx = Math.floor(Math.random() * appliances.length);
+    if (appliances[idx].status === 'online') {
+      appliances[idx].state = !appliances[idx].state;
+    }
+    renderAppliances(document.getElementById('filter-offline').checked);
+  }
+}, 5000);
+
+// ===== ROBOROCK START BUTTON =====
+document.getElementById('roborock-start').addEventListener('click', function() {
+  const original = this.textContent;
+  this.textContent = 'Starting...';
+  this.disabled = true;
+  this.style.opacity = '0.6';
+  setTimeout(() => {
+    this.textContent = '✓ Cleaning Started';
+    this.style.background = 'var(--green-bg)';
+    this.style.borderColor = 'var(--green)';
+    this.style.color = 'var(--green)';
+    setTimeout(() => {
+      this.textContent = original;
+      this.disabled = false;
+      this.style.opacity = '1';
+      this.style.background = 'rgba(59,130,246,0.1)';
+      this.style.borderColor = 'var(--accent)';
+      this.style.color = 'var(--accent)';
+    }, 2500);
+  }, 800);
+});
+
+// ===== INIT =====
+updateOverview();
+</script>
+</body>
+</html>
