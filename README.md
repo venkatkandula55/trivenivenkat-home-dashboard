@@ -14,3 +14,5 @@ Live at: https://venkatkandula55.github.io/triveni-home-dashboard/
 - Thermostats (4 thermostats with +/- controls)
 
 Built with vanilla HTML/CSS/JS, Chart.js, Font Awesome.
+
+# Dashboard is live at: https://venkatkandula55.github.io/trivenivenkat-home-dashboard/
