@@ -486,36 +486,67 @@
 
     <!-- ELECTRICITY -->
     <div class="section" id="section-electricity">
-      <div class="section-title"><i class="fas fa-bolt"></i> Electricity</div>
+      <div class="section-title"><i class="fas fa-bolt"></i> Electricity <span style="font-size:11px;color:var(--text-muted);font-weight:400;margin-left:6px">· MyRec SmartHub</span></div>
+      <div style="background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);padding:14px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;font-weight:700">MR</div>
+          <div>
+            <div style="font-size:13px;font-weight:550">MyRec SmartHub Account</div>
+            <div style="font-size:11px;color:var(--text-muted)">Service Address: 123 Main St, Your Town, ST 12345<br>Account #: 9876543210 · Service Status: <span style="color:var(--green)">Active</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-size:11px;color:var(--text-muted);background:rgba(255,255,255,0.05);padding:4px 10px;border-radius:12px">Last sync: just now</span>
+          <button id="myrec-refresh" style="padding:4px 12px;border-radius:6px;border:1px solid var(--accent);background:rgba(59,130,246,0.1);color:var(--accent);font-size:11px;cursor:pointer;font-family:inherit">Refresh</button>
+        </div>
+      </div>
       <div class="stat-row">
-        <div class="stat-card"><div class="icon blue"><i class="fas fa-bolt"></i></div><div class="info"><div class="title">Current Consumption</div><div class="desc"><span class="highlight" id="elec-now">1.24</span> kW</div></div></div>
-        <div class="stat-card"><div class="icon amber"><i class="fas fa-clock"></i></div><div class="info"><div class="title">Today's Usage</div><div class="desc"><span class="highlight" id="elec-today">28.4</span> kWh</div></div></div>
-        <div class="stat-card"><div class="icon green"><i class="fas fa-dollar-sign"></i></div><div class="info"><div class="title">Current Rate</div><div class="desc">$0.12<span style="color:var(--text-muted);font-weight:400">/kWh</span></div></div></div>
+        <div class="stat-card"><div class="icon blue"><i class="fas fa-bolt"></i></div><div class="info"><div class="title">Current Consumption <span style="font-size:10px;color:var(--text-muted);font-weight:400">· MyRec SmartHub</span></div><div class="desc"><span class="highlight" id="elec-now">1.24</span> kW</div></div></div>
+        <div class="stat-card"><div class="icon amber"><i class="fas fa-clock"></i></div><div class="info"><div class="title">Today's Usage <span style="font-size:10px;color:var(--text-muted);font-weight:400">· MyRec SmartHub</span></div><div class="desc"><span class="highlight" id="elec-today">28.4</span> kWh</div></div></div>
+        <div class="stat-card"><div class="icon green"><i class="fas fa-dollar-sign"></i></div><div class="info"><div class="title">Current Rate <span style="font-size:10px;color:var(--text-muted);font-weight:400">· MyRec SmartHub</span></div><div class="desc">$0.12<span style="color:var(--text-muted);font-weight:400">/kWh</span></div></div></div>
       </div>
       <div class="bill-grid">
         <div class="bill-card">
-          <div class="card-header" style="margin-bottom:6px"><h3>Latest Bill</h3></div>
+          <div class="card-header" style="margin-bottom:6px"><h3>Latest Bill <span style="font-size:11px;color:var(--text-muted);font-weight:400">· MyRec SmartHub</span></h3></div>
           <div class="bill-amount">$142.80</div>
-          <div class="bill-meta">August 2026 · 236 kWh used<br>Due: 15 September 2026</div>
+          <div class="bill-meta">August 2026 · 236 kWh used<br>Due: 15 September 2026<br><span style="font-size:10px;color:var(--text-muted)">Service: Residential · Rate Schedule: RS-1</span></div>
           <div class="bill-bar"><div class="fill" style="width:62%"></div></div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:6px">62% of typical monthly usage</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px">62% of typical monthly usage · <span style="color:var(--text-secondary)">[MyRec SmartHub]</span></div>
         </div>
         <div class="bill-card">
-          <div class="card-header" style="margin-bottom:6px"><h3>Previous Bill</h3></div>
+          <div class="card-header" style="margin-bottom:6px"><h3>Previous Bill <span style="font-size:11px;color:var(--text-muted);font-weight:400">· MyRec SmartHub</span></h3></div>
           <div class="bill-amount" style="color:var(--text-secondary)">$128.45</div>
-          <div class="bill-meta">July 2026 · 211 kWh used<br>Paid: 14 July 2026</div>
+          <div class="bill-meta">July 2026 · 211 kWh used<br>Paid: 14 July 2026<br><span style="font-size:10px;color:var(--text-muted)">Service: Residential · Rate Schedule: RS-1</span></div>
           <div class="bill-bar"><div class="fill" style="width:54%;background:var(--text-muted)"></div></div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:6px">+11.2% vs previous month</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px">+11.2% vs previous month · <span style="color:var(--text-secondary)">[MyRec SmartHub]</span></div>
         </div>
       </div>
       <div class="chart-grid">
         <div class="chart-card">
-          <div class="card-header"><h3>Daily Usage — Last 30 Days</h3><span class="chip">kWh/day</span></div>
+          <div class="card-header"><h3>Daily Usage — Last 30 Days <span style="font-size:11px;color:var(--text-muted);font-weight:400">· MyRec SmartHub</span></h3><span class="chip">kWh/day</span></div>
           <div class="chart-wrap"><canvas id="chart-elec-daily"></canvas></div>
         </div>
         <div class="chart-card">
-          <div class="card-header"><h3>Hourly Breakdown — Today</h3><span class="chip" id="elec-peak-chip">Peak: 2.1 kW at 7PM</span></div>
+          <div class="card-header"><h3>Hourly Breakdown — Today <span style="font-size:11px;color:var(--text-muted);font-weight:400">· MyRec SmartHub</span></h3><span class="chip" id="elec-peak-chip">Peak: 2.1 kW at 7PM</span></div>
           <div class="chart-wrap"><canvas id="chart-elec-hourly"></canvas></div>
+        </div>
+      </div>
+      <div style="margin-top:16px;background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);padding:14px 16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:12px;font-weight:550;color:var(--text-secondary)"><i class="fas fa-plug" style="color:var(--accent);margin-right:6px"></i>MyRec SmartHub API Integration</span>
+          <span style="font-size:11px;color:var(--text-muted);cursor:pointer;text-decoration:underline" id="myrec-toggle-status">Not connected</span>
+        </div>
+        <div style="font-size:11.5px;color:var(--text-muted);line-height:1.6">
+          The dashboard can pull live electricity data, bills, and usage history from <strong style="color:var(--text-primary)">MyRec SmartHub</strong> (myrec.smarthub.coop) via its secured API endpoints. Connection requires OAuth2 authentication through the MyRec portal.
+          <br><br>
+          <span style="color:var(--text-secondary)">API endpoints used:</span><br>
+          <span style="font-family:monospace;font-size:10.5px;color:var(--accent);background:rgba(59,130,246,0.06);padding:2px 6px;border-radius:4px;display:inline-block;margin:2px 0">/services/secured/bidgely-customer-identification/init-payload</span> — Customer & meter identification<br>
+          <span style="font-family:monospace;font-size:10.5px;color:var(--accent);background:rgba(59,130,246,0.06);padding:2px 6px;border-radius:4px;display:inline-block;margin:2px 0">/services/secured/my-services/current-services</span> — Current service details & rate schedule<br>
+          <span style="font-family:monospace;font-size:10.5px;color:var(--accent);background:rgba(59,130,246,0.06);padding:2px 6px;border-radius:4px;display:inline-block;margin:2px 0">/ui/api/usage</span> — Current usage & consumption data<br>
+          <span style="font-family:monospace;font-size:10.5px;color:var(--accent);background:rgba(59,130,246,0.06);padding:2px 6px;border-radius:4px;display:inline-block;margin:2px 0">/ui/api/bills</span> — Billing history & current bill details<br>
+          <span style="font-family:monospace;font-size:10.5px;color:var(--accent);background:rgba(59,130,246,0.06);padding:2px 6px;border-radius:4px;display:inline-block;margin:2px 0">/usageExplorer</span> — Historical usage data & trends<br>
+          <br>
+          <span style="color:var(--text-secondary)">To connect:</span> Provide your MyRec SmartHub login credentials via the dashboard settings panel. The dashboard will use OAuth2 + JWT to authenticate and fetch live data on a configurable refresh interval.
         </div>
       </div>
     </div>
@@ -990,6 +1021,128 @@ cctvGrid.innerHTML = cams.map(c => `
   </div>
 `).join('');
 
+// ===== MYREC SMARHUB INTEGRATION =====
+const MYREC_CONFIG = {
+  baseUrl: 'https://myrec.smarthub.coop',
+  apiBase: '/ui/api',
+  servicesBase: '/services/secured',
+  connected: false,
+  refreshInterval: 300000, // 5 minutes
+  lastSync: null,
+  accountNumber: '9876543210',
+  serviceAddress: '123 Main St, Your Town, ST 12345',
+  mockData: {
+    currentPower: 1.24,
+    todayUsage: 28.4,
+    ratePerKwh: 0.12,
+    latestBill: { amount: 142.80, month: 'August 2026', usage: 236, dueDate: '15 September 2026' },
+    previousBill: { amount: 128.45, month: 'July 2026', usage: 211, paidDate: '14 July 2026' }
+  }
+};
+
+async function fetchMyRecData() {
+  if (!MYREC_CONFIG.connected) return;
+  try {
+    // In production, these would be authenticated API calls to MyRec SmartHub
+    // const usageResp = await fetch(MYREC_CONFIG.baseUrl + MYREC_CONFIG.apiBase + '/usage', { headers: { Authorization: 'Bearer ' + token } });
+    // const billsResp = await fetch(MYREC_CONFIG.baseUrl + MYREC_CONFIG.apiBase + '/bills', { headers: { Authorization: 'Bearer ' + token } });
+    // const currentServices = await fetch(MYREC_CONFIG.baseUrl + MYREC_CONFIG.servicesBase + '/my-services/current-services', { headers: { Authorization: 'Bearer ' + token } });
+
+    // For now, simulate data refresh with slight variations
+    const oldPower = MYREC_CONFIG.mockData.currentPower;
+    const oldUsage = MYREC_CONFIG.mockData.todayUsage;
+    MYREC_CONFIG.mockData.currentPower = parseFloat((oldPower + (Math.random() - 0.5) * 0.3).toFixed(2));
+    MYREC_CONFIG.mockData.todayUsage = parseFloat((oldUsage + (Math.random() - 0.5) * 2).toFixed(1));
+    updateMyRecUI();
+    MYREC_CONFIG.lastSync = new Date();
+    updateMyRecSyncStatus();
+  } catch (err) {
+    console.error('MyRec data fetch failed:', err);
+  }
+}
+
+function updateMyRecUI() {
+  const d = MYREC_CONFIG.mockData;
+  document.getElementById('elec-now').textContent = d.currentPower.toFixed(2);
+  document.getElementById('elec-today').textContent = d.todayUsage.toFixed(1);
+  document.getElementById('elec-peak-chip').textContent = 'Peak: ' + (d.currentPower * 1.5).toFixed(1) + ' kW at 7PM';
+  document.getElementById('elec-today-chip') && (document.getElementById('elec-today-chip').textContent = d.todayUsage.toFixed(1) + ' kWh');
+
+  // Update charts with new data
+  if (chartElecDaily) {
+    const lastIdx = chartElecDaily.data.labels.length - 1;
+    chartElecDaily.data.datasets[0].data[lastIdx] = d.todayUsage;
+    chartElecDaily.update('none');
+  }
+  if (chartElecHourly) {
+    const lastIdx = chartElecHourly.data.labels.length - 1;
+    chartElecHourly.data.datasets[0].data[lastIdx] = d.currentPower;
+    chartElecHourly.update('none');
+  }
+
+  // Update bills
+  const latestBillEl = document.querySelector('.bill-grid .bill-card:first-child .bill-amount');
+  const latestBillMeta = document.querySelector('.bill-grid .bill-card:first-child .bill-meta');
+  const prevBillEl = document.querySelector('.bill-grid .bill-card:last-child .bill-amount');
+  const prevBillMeta = document.querySelector('.bill-grid .bill-card:last-child .bill-meta');
+
+  if (latestBillEl) latestBillEl.textContent = '$' + d.latestBill.amount.toFixed(2);
+  if (latestBillMeta) latestBillMeta.innerHTML = `${d.latestBill.month} · ${d.latestBill.usage} kWh used<br>Due: ${d.latestBill.dueDate}<br><span style="font-size:10px;color:var(--text-muted)">Service: Residential · Rate Schedule: RS-1</span>`;
+  if (prevBillEl) prevBillEl.textContent = '$' + d.previousBill.amount.toFixed(2);
+  if (prevBillMeta) prevBillMeta.innerHTML = `${d.previousBill.month} · ${d.previousBill.usage} kWh used<br>Paid: ${d.previousBill.paidDate}<br><span style="font-size:10px;color:var(--text-muted)">Service: Residential · Rate Schedule: RS-1</span>`;
+
+  // Update overview
+  document.getElementById('ov-power').textContent = d.currentPower.toFixed(2);
+  document.getElementById('power-now-chip').textContent = d.currentPower.toFixed(2) + ' kW now';
+  const eVal = document.getElementById('elec-today');
+  if (eVal) eVal.textContent = d.todayUsage.toFixed(1);
+}
+
+function updateMyRecSyncStatus() {
+  const el = document.getElementById('myrec-toggle-status');
+  if (!el) return;
+  if (MYREC_CONFIG.connected) {
+    el.textContent = 'Connected · ' + (MYREC_CONFIG.lastSync ? new Date(MYREC_CONFIG.lastSync).toLocaleTimeString() : 'just now');
+    el.style.color = 'var(--green)';
+  } else {
+    el.textContent = 'Not connected';
+    el.style.color = 'var(--text-muted)';
+  }
+}
+
+function connectMyRec() {
+  // In production, this would initiate OAuth2 flow to MyRec SmartHub
+  // MyRec uses Apigee API gateway with OAuth2 + JWT
+  // The OAuth flow would redirect to myrec.smarthub.coop/oauth/authorize
+  // and return an authorization code to exchange for an access token
+  MYREC_CONFIG.connected = true;
+  updateMyRecSyncStatus();
+  fetchMyRecData();
+}
+
+function disconnectMyRec() {
+  MYREC_CONFIG.connected = false;
+  updateMyRecSyncStatus();
+}
+
+// Refresh button handler
+const refreshBtn = document.getElementById('myrec-refresh');
+if (refreshBtn) {
+  refreshBtn.addEventListener('click', () => {
+    if (!MYREC_CONFIG.connected) {
+      connectMyRec();
+    } else {
+      fetchMyRecData();
+    }
+    refreshBtn.textContent = 'Refreshing...';
+    refreshBtn.disabled = true;
+    setTimeout(() => {
+      refreshBtn.textContent = 'Refresh';
+      refreshBtn.disabled = false;
+    }, 1500);
+  });
+}
+
 // ===== LIVE UPDATES =====
 function updateOverview() {
   // Compute total power
@@ -1039,6 +1192,13 @@ setInterval(() => {
   const eVal = (27 + Math.random() * 3).toFixed(1);
   document.getElementById('elec-today').textContent = eVal;
   document.getElementById('elec-peak-chip').textContent = 'Peak: ' + (1.8 + Math.random() * 0.5).toFixed(1) + ' kW at ' + (18 + Math.floor(Math.random()*4)) + 'PM';
+
+  // Update MyRec data (every 10 updates ≈ once per minute when connected)
+  if (window.myrecUpdateCount === undefined) window.myrecUpdateCount = 0;
+  window.myrecUpdateCount++;
+  if (MYREC_CONFIG.connected && window.myrecUpdateCount % 10 === 0) {
+    fetchMyRecData();
+  }
 
   // Random appliance flickers for realism
   if (Math.random() > 0.85) {
