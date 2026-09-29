@@ -340,6 +340,52 @@
   .cctv-summary .cs-card .cs-value { font-size: 22px; font-weight: 650; }
   .cctv-summary .cs-card .cs-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
 
+  .cam-action-btn {
+    padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03); color: var(--text-secondary);
+    font-size: 11px; cursor: pointer; font-family: inherit; transition: all var(--transition);
+    display: inline-flex; align-items: center; gap: 3px;
+  }
+  .cam-action-btn:hover { background: rgba(255,255,255,0.07); color: var(--text-primary); }
+
+  .cam-config-row {
+    background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 14px;
+  }
+  .cam-config-row .cr-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .cam-config-row .cr-header .cr-name { font-size: 13px; font-weight: 550; }
+  .cam-config-row .cr-header .cr-toggle {
+    cursor: pointer; font-size: 11px; color: var(--text-muted);
+    border: none; background: none; padding: 0; font-family: inherit;
+  }
+  .cam-config-row .cr-fields { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .cam-config-row .cr-fields input {
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    border-radius: 4px; padding: 6px 8px; color: var(--text-primary);
+    font-size: 12px; font-family: inherit; outline: none; transition: border var(--transition);
+  }
+  .cam-config-row .cr-fields input:focus { border-color: var(--accent); }
+  .cam-config-row .cr-fields label {
+    display: block; font-size: 10px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 3px;
+  }
+  .cam-config-row .cr-fields .full-width { grid-column: 1 / -1; }
+  .cam-config-row .cr-actions {
+    display: flex; gap: 6px; margin-top: 10px; justify-content: flex-end;
+  }
+  .cam-config-row .cr-actions button {
+    padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03); color: var(--text-secondary);
+    font-size: 11px; cursor: pointer; font-family: inherit; transition: all var(--transition);
+  }
+  .cam-config-row .cr-actions button:hover { background: rgba(255,255,255,0.07); color: var(--text-primary); }
+  .cam-config-row .cr-actions .btn-danger:hover { border-color: var(--red); color: var(--red); }
+  .cam-config-row .cr-actions .btn-save { border-color: var(--accent); color: var(--accent); }
+  .cam-config-row .cr-actions .btn-save:hover { background: rgba(59,130,246,0.1); }
+
   @media (max-width: 1100px) {
     .overview-grid { grid-template-columns: repeat(2, 1fr); }
     .chart-grid { grid-template-columns: 1fr; }
@@ -591,22 +637,49 @@
     <div class="section" id="section-cctv">
       <div class="section-title"><i class="fas fa-video"></i> CCTV &amp; Security <span style="font-size:11px;color:var(--text-muted);font-weight:400;margin-left:6px">· Eufy HomeCenter</span></div>
       <div class="cctv-summary">
-        <div class="cs-card"><div class="cs-value" style="color:var(--green)">5<span style="font-size:13px;color:var(--text-muted)"> / 5</span></div><div class="cs-label">Cameras Online</div></div>
-        <div class="cs-card"><div class="cs-value" style="color:var(--green)">No Alerts</div><div class="cs-label">Last 24 hours</div></div>
-        <div class="cs-card"><div class="cs-value" style="color:var(--green)">Armed</div><div class="cs-label">Security system</div></div>
+        <div class="cs-card"><div class="cs-value" id="eufy-cameras-online" style="color:var(--green)">3 / 3</div><div class="cs-label">Cameras Configured</div></div>
+        <div class="cs-card"><div class="cs-value" id="eufy-alerts-status" style="color:var(--green)">No Alerts</div><div class="cs-label">Last 24 hours</div></div>
+        <div class="cs-card"><div class="cs-value" id="eufy-system-status" style="color:var(--green)">Configured</div><div class="cs-label">Eufy SoloCam S340</div></div>
       </div>
       <div class="cctv-grid" id="cctv-grid"></div>
       <div style="margin-top:18px;background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);padding:16px">
         <div class="flex-between" style="margin-bottom:10px">
           <span style="font-size:13px;font-weight:550"><i class="fas fa-shield-halved" style="color:var(--green);margin-right:6px"></i>System Status</span>
-          <span style="font-size:12px;color:var(--text-muted)">Last event: 3 hours ago</span>
+          <span style="font-size:12px;color:var(--text-muted)" id="eufy-last-event">Configure cameras to see events</span>
         </div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--text-secondary)">
           <span><i class="fas fa-check-circle" style="color:var(--green)"></i> Motion detection: <strong style="color:var(--text-primary)">Enabled</strong></span>
-          <span><i class="fas fa-check-circle" style="color:var(--green)"></i> Entry sensors: <strong style="color:var(--text-primary)">4 active</strong></span>
-          <span><i class="fas fa-check-circle" style="color:var(--green)"></i> Alarm: <strong style="color:var(--text-primary)">Disarmed</strong></span>
-          <span><i class="fas fa-check-circle" style="color:var(--green)"></i> Cloud storage: <strong style="color:var(--text-primary)">7 days</strong></span>
-        </nbsp>
+          <span><i class="fas fa-check-circle" style="color:var(--green)"></i> Night vision: <strong style="color:var(--text-primary)">Enabled</strong></span>
+          <span><i class="fas fa-check-circle" style="color:var(--green)"></i> Local storage: <strong style="color:var(--text-primary)">SD card</strong></span>
+          <span><i class="fas fa-check-circle" style="color:var(--green)"></i> RTSP: <strong style="color:var(--text-primary)">Port 554</strong></span>
+        </div>
+      </div>
+
+      <!-- EUFY CAMERA CONFIG PANEL -->
+      <div style="margin-top:22px;background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);padding:18px">
+        <div style="font-size:13px;font-weight:550;margin-bottom:4px;display:flex;align-items:center;gap:8px">
+          <i class="fas fa-sliders-h" style="color:var(--accent)"></i>
+          Eufy SoloCam S340 — Camera Configuration
+          <span style="font-size:11px;color:var(--text-muted);font-weight:400;margin-left:4px">(saved locally in your browser)</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:14px;line-height:1.5">
+          Enable RTSP in the Eufy app for each camera: <strong style="color:var(--text-primary)">Camera → Settings → RTSP → Enable</strong>.
+          Set RTSP username &amp; password (same for all cameras). Enter each camera's local IP address.
+          RTSP URL format: <code style="background:rgba(255,255,255,0.06);padding:1px 5px;border-radius:3px;font-size:11px;color:var(--accent)">rtsp://user:pass@ip:554/live0</code>
+        </div>
+        <div id="eufy-config-hint" style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius-sm);padding:12px 14px;font-size:12.5px;color:var(--text-secondary);margin-bottom:14px;display:block">
+          <i class="fas fa-info-circle" style="color:var(--accent);margin-right:6px"></i>
+          No cameras configured yet. Add your SoloCam S340 details below to enable RTSP stream links.
+        </div>
+        <div id="eufy-cam-config-list" style="display:flex;flex-direction:column;gap:10px"></div>
+        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+          <button id="eufy-add-cam" style="padding:8px 16px;border-radius:var(--radius-sm);border:1px solid var(--accent);background:rgba(59,130,246,0.1);color:var(--accent);font-size:12.5px;cursor:pointer;font-family:inherit;font-weight:500;transition:all var(--transition)">
+            <i class="fas fa-plus" style="margin-right:4px"></i> Add Camera
+          </button>
+          <button id="eufy-reset-cam" style="padding:8px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);background:rgba(255,255,255,0.03);color:var(--text-secondary);font-size:12.5px;cursor:pointer;font-family:inherit;transition:all var(--transition)">
+            <i class="fas fa-undo" style="margin-right:4px"></i> Reset to Defaults
+          </button>
+        </div>
       </div>
     </div>
 
@@ -989,37 +1062,316 @@ thermoGrid.addEventListener('click', (e) => {
   updateOverview();
 });
 
-// ===== CCTV =====
-const cams = [
-  { name:'Front Door Cam', loc:'Entrance · Outside', live:true, clear:true, time:'Live', rec:true },
-  { name:'Backyard Cam', loc:'Garden · Rear', live:true, clear:true, time:'Live', rec:true },
-  { name:'Garage Cam', loc:'Garage · Side Entry', live:true, clear:true, time:'Live', rec:true },
-  { name:'Living Room Cam', loc:'Interior · Main Room', live:false, clear:true, time:'06:42 PM', rec:false },
-  { name:'Hallway Cam', loc:'Interior · Upper Hall', live:false, clear:true, time:'05:18 PM', rec:false },
-];
-const cctvGrid = document.getElementById('cctv-grid');
-cctvGrid.innerHTML = cams.map(c => `
-  <div class="cam-card">
-    <div class="cam-header">
-      <div class="cam-info">
-        <span class="cam-name">${c.name}</span>
-        <span class="cam-loc"><i class="fas fa-location-dot"></i> ${c.loc}</span>
+// ===== CCTV & EUFY SECURITY =====
+// Eufy SoloCam S340 integration — local RTSP only
+// Cameras are stored in localStorage under 'eufy_cameras'
+// RTSP URL format: rtsp://[user]:[pass]@[ip]:554/live0
+
+const EUFY_CONFIG = {
+  brand: 'Eufy',
+  model: 'SoloCam S340',
+  accountEmail: 'venkatkandula7@gmail.com',
+  // RTSP must be enabled in Eufy app: Camera → Settings → RTSP → Enable
+  // Set credentials there; they apply to all cameras on the account
+  rtspPort: 554,
+  snapshotEndpoint: '/cgi-bin/snapshot.jpg', // common ONVIF snapshot path; adjust per camera if needed
+};
+
+function getStoredCameras() {
+  try {
+    const stored = localStorage.getItem('eufy_cameras');
+    if (stored) return JSON.parse(stored);
+  } catch (e) { /* ignore */ }
+  return null;
+}
+
+function saveCameras(cameras) {
+  localStorage.setItem('eufy_cameras', JSON.stringify(cameras));
+}
+
+function defaultCameras() {
+  return [
+    { id: 'cam-1', name: 'SoloCam S340 #1', loc: 'Front Yard', ip: '', rtspUser: '', rtspPass: '', enabled: true },
+    { id: 'cam-2', name: 'SoloCam S340 #2', loc: 'Backyard', ip: '', rtspUser: '', rtspPass: '', enabled: true },
+    { id: 'cam-3', name: 'SoloCam S340 #3', loc: 'Side Entry', ip: '', rtspUser: '', rtspPass: '', enabled: true },
+  ];
+}
+
+let eufyCameras = getStoredCameras() || defaultCameras();
+if (!getStoredCameras()) saveCameras(eufyCameras);
+
+function getRtspUrl(cam) {
+  if (!cam.ip || !cam.rtspUser || !cam.rtspPass) return null;
+  return `rtsp://${cam.rtspUser}:${cam.rtspPass}@${cam.ip}:${EUFY_CONFIG.rtspPort}/live0`;
+}
+
+function getSnapshotUrl(cam) {
+  if (!cam.ip) return null;
+  // Try common snapshot endpoints; camera must expose one for this to work
+  return `http://${cam.ip}${EUFY_CONFIG.snapshotEndpoint}`;
+}
+
+async function checkCameraOnline(cam) {
+  if (!cam.ip) return false;
+  try {
+    const ctrl = new AbortController();
+    const timeout = setTimeout(() => ctrl.abort(), 3000);
+    const resp = await fetch(`http://${cam.ip}`, { mode: 'no-cors', signal: ctrl.signal });
+    clearTimeout(timeout);
+    return true; // no-cors resolves even if we can't read response — presence of route is enough
+  } catch (e) {
+    return false;
+  }
+}
+
+function renderEufyCameras() {
+  const grid = document.getElementById('cctv-grid');
+  const onlineCount = eufyCameras.filter(c => c.enabled && c.ip).length; // rough proxy
+  const totalConfigured = eufyCameras.filter(c => c.enabled).length;
+
+  // Update summary
+  document.getElementById('eufy-cameras-online').textContent = totalConfigured > 0 ? totalConfigured + ' / ' + totalConfigured : '0 / 0';
+  document.getElementById('eufy-alerts-status').textContent = totalConfigured > 0 ? 'No Alerts' : 'No cameras configured';
+  document.getElementById('eufy-system-status').textContent = totalConfigured > 0 ? 'Configured' : 'Not configured';
+  document.getElementById('eufy-last-event').textContent = totalConfigured > 0 ? 'Configure cameras to see events' : '—';
+
+  grid.innerHTML = eufyCameras.filter(c => c.enabled).map(c => {
+    const rtspUrl = getRtspUrl(c);
+    const snapUrl = getSnapshotUrl(c);
+    const hasCredentials = c.ip && c.rtspUser && c.rtspPass;
+    const ipStatus = c.ip ? '<span style="color:var(--green);font-size:10px"><i class="fas fa-check-circle"></i> Online</span>' :
+                      '<span style="color:var(--text-muted);font-size:10px"><i class="fas fa-exclamation-circle"></i> No IP</span>';
+
+    return `
+      <div class="cam-card">
+        <div class="cam-header">
+          <div class="cam-info">
+            <span class="cam-name">${c.name}</span>
+            <span class="cam-loc"><i class="fas fa-location-dot"></i> ${c.loc}</span>
+          </div>
+          <span class="cam-badge ${hasCredentials ? 'live' : 'clear'}" style="cursor:pointer" onclick="toggleCam('${c.id}')" title="Toggle camera">
+            ${hasCredentials ? 'RTSP READY' : 'NOT CONFIGURED'}
+          </span>
+        </div>
+        <div class="cam-view">
+          <div class="cam-placeholder">
+            ${hasCredentials
+              ? `<i class="fas fa-video" style="font-size:28px;color:var(--accent);opacity:0.7"></i>
+                 <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">RTSP stream ready</div>
+                 <div style="font-size:10px;color:var(--text-muted);margin-top:2px;font-family:monospace;word-break:break-all">${rtspUrl}</div>`
+              : `<i class="fas fa-camera" style="font-size:28px;opacity:0.4"></i>
+                 <div style="font-size:11px;color:var(--text-muted);margin-top:6px">Enter camera IP and RTSP credentials</div>
+                 <div style="font-size:10px;color:var(--text-muted);margin-top:2px">Use the config panel below</div>`}
+          </div>
+          <div class="rec-indicator" style="display:${hasCredentials ? 'block' : 'none'}"></div>
+        </div>
+        <div class="cam-footer">
+          <span style="display:flex;align-items:center;gap:4px">
+            <i class="fas fa-wifi" style="margin-right:4px"></i>${ipStatus}
+          </span>
+          <span style="display:flex;gap:6px;align-items:center">
+            ${hasCredentials ? `
+              <button class="cam-action-btn" onclick="copyRtsp('${c.id}')" title="Copy RTSP URL">
+                <i class="fas fa-copy"></i> Copy
+              </button>
+              <button class="cam-action-btn" onclick="openVlc('${c.id}')" title="Open in VLC">
+                <i class="fas fa-play"></i> VLC
+              </button>
+            ` : ''}
+          </span>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Also update the "not configured" hint
+  const configuredCount = eufyCameras.filter(c => c.enabled && c.ip && c.rtspUser && c.rtspPass).length;
+  const configHint = document.getElementById('eufy-config-hint');
+  if (configHint) {
+    configHint.style.display = configuredCount > 0 ? 'none' : 'block';
+  }
+}
+
+function toggleCam(id) {
+  const cam = eufyCameras.find(c => c.id === id);
+  if (cam) {
+    cam.enabled = !cam.enabled;
+    saveCameras(eufyCameras);
+    renderEufyCameras();
+  }
+}
+
+function copyRtsp(id) {
+  const cam = eufyCameras.find(c => c.id === id);
+  if (cam) {
+    const url = getRtspUrl(cam);
+    if (url) {
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('RTSP URL copied to clipboard');
+      }).catch(() => {
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = url;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        showToast('RTSP URL copied');
+      });
+    }
+  }
+}
+
+function openVlc(id) {
+  const cam = eufyCameras.find(c => c.id === id);
+  if (cam) {
+    const url = getRtspUrl(cam);
+    if (url) {
+      // Try to launch VLC via URI scheme; otherwise show instructions
+      const vlcScheme = `vlc://${url}`;
+      window.open(vlcScheme, '_blank');
+      // Fallback: show a toast with the URL to paste into VLC manually
+      setTimeout(() => {
+        showToast('If VLC did not open, paste this URL into VLC → Media → Open Network Stream:\n' + url);
+      }, 1000);
+    }
+  }
+}
+
+function showToast(msg) {
+  let toast = document.getElementById('eufy-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'eufy-toast';
+    toast.style.cssText = `
+      position:fixed; bottom:24px; right:24px; z-index:9999;
+      background:#1a1e28; border:1px solid #2a3346; color:#e8eaed;
+      padding:12px 18px; border-radius:8px; font-size:13px;
+      box-shadow:0 4px 16px rgba(0,0,0,0.5); max-width:360px;
+      transition: opacity 0.3s ease;
+    `;
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  setTimeout(() => { toast.style.opacity = '0'; }, 3500);
+}
+
+// Initial render
+renderEufyCameras();
+renderCamConfig();
+
+// ===== CAMERA CONFIG PANEL =====
+function renderCamConfig() {
+  const list = document.getElementById('eufy-cam-config-list');
+  if (!list) return;
+  list.innerHTML = eufyCameras.map(c => `
+    <div class="cam-config-row">
+      <div class="cr-header">
+        <span class="cr-name">${c.name} <span style="font-weight:400;color:var(--text-muted);font-size:11.5px">· ${c.loc}</span></span>
+        <button class="cr-toggle" onclick="toggleCam('${c.id}')">
+          ${c.enabled ? '<span style="color:var(--green)"><i class="fas fa-toggle-on"></i> Enabled</span>' : '<span style="color:var(--text-muted)"><i class="fas fa-toggle-off"></i> Disabled</span>'}
+        </button>
       </div>
-      <span class="cam-badge ${c.live ? 'live' : 'clear'}">${c.live ? 'LIVE' : 'CLEAR'}</span>
-    </div>
-    <div class="cam-view">
-      <div class="cam-placeholder">
-        <i class="fas ${c.live ? 'fa-video' : 'fa-image'}"></i>
-        <div>${c.live ? 'Eufy Camera · Streaming' : 'Last captured: ' + c.time}</div>
+      <div class="cr-fields" id="cr-fields-${c.id}" style="display:${c.enabled ? '' : 'none'}">
+        <div>
+          <label>Camera Name</label>
+          <input type="text" id="cam-name-${c.id}" value="${c.name}" placeholder="e.g. Front Yard Cam">
+        </div>
+        <div>
+          <label>Location</label>
+          <input type="text" id="cam-loc-${c.id}" value="${c.loc}" placeholder="e.g. Front Yard">
+        </div>
+        <div class="full-width">
+          <label>Local IP Address</label>
+          <input type="text" id="cam-ip-${c.id}" value="${c.ip}" placeholder="e.g. 192.168.1.50">
+        </div>
+        <div>
+          <label>RTSP Username</label>
+          <input type="text" id="cam-rtsp-user-${c.id}" value="${c.rtspUser}" placeholder="Enter RTSP username">
+        </div>
+        <div>
+          <label>RTSP Password</label>
+          <input type="password" id="cam-rtsp-pass-${c.id}" value="${c.rtspPass}" placeholder="Enter RTSP password">
+        </div>
+        <div class="full-width cr-actions">
+          <button class="btn-save" onclick="saveCamConfig('${c.id}')"><i class="fas fa-check" style="margin-right:3px"></i> Save</button>
+          <button class="btn-danger" onclick="removeCam('${c.id}')"><i class="fas fa-trash" style="margin-right:3px"></i> Remove</button>
+        </div>
       </div>
-      ${c.rec ? '<div class="rec-indicator"></div>' : ''}
     </div>
-    <div class="cam-footer">
-      <span><i class="fas fa-${c.live ? 'video' : 'camera'}" style="margin-right:4px"></i>${c.live ? 'Recording' : 'Idle'}</span>
-      <span class="cam-time">${c.time}</span>
-    </div>
-  </div>
-`).join('');
+  `).join('');
+}
+
+function saveCamConfig(id) {
+  const cam = eufyCameras.find(c => c.id === id);
+  if (!cam) return;
+  const nameInput = document.getElementById(`cam-name-${id}`);
+  const locInput = document.getElementById(`cam-loc-${id}`);
+  const ipInput = document.getElementById(`cam-ip-${id}`);
+  const userInput = document.getElementById(`cam-rtsp-user-${id}`);
+  const passInput = document.getElementById(`cam-rtsp-pass-${id}`);
+  if (nameInput) cam.name = nameInput.value.trim() || cam.name;
+  if (locInput) cam.loc = locInput.value.trim() || cam.loc;
+  if (ipInput) cam.ip = ipInput.value.trim();
+  if (userInput) cam.rtspUser = userInput.value.trim();
+  if (passInput) cam.rtspPass = passInput.value.trim();
+  saveCameras(eufyCameras);
+  renderEufyCameras();
+  showToast(`Saved ${cam.name}`);
+}
+
+function addCamera() {
+  const count = eufyCameras.length + 1;
+  const newCam = {
+    id: 'cam-' + Date.now(),
+    name: `SoloCam S340 #${count}`,
+    loc: 'New Camera',
+    ip: '',
+    rtspUser: '',
+    rtspPass: '',
+    enabled: true,
+  };
+  eufyCameras.push(newCam);
+  saveCameras(eufyCameras);
+  renderCamConfig();
+  renderEufyCameras();
+  // Scroll to the new config row
+  setTimeout(() => {
+    const el = document.getElementById(`cr-fields-${newCam.id}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
+}
+
+function removeCam(id) {
+  const idx = eufyCameras.findIndex(c => c.id === id);
+  if (idx === -1) return;
+  const cam = eufyCameras[idx];
+  eufyCameras.splice(idx, 1);
+  saveCameras(eufyCameras);
+  renderCamConfig();
+  renderEufyCameras();
+  showToast(`Removed ${cam.name}`);
+}
+
+// Wire up add/reset buttons
+document.getElementById('eufy-add-cam')?.addEventListener('click', addCamera);
+document.getElementById('eufy-reset-cam')?.addEventListener('click', () => {
+  eufyCameras = defaultCameras();
+  saveCameras(eufyCameras);
+  renderCamConfig();
+  renderEufyCameras();
+  showToast('Reset to default camera list');
+});
+
+// ===== PERIODIC ONLINE CHECK =====
+setInterval(async () => {
+  for (const cam of eufyCameras) {
+    if (cam.ip) {
+      cam._online = await checkCameraOnline(cam);
+    }
+  }
+  renderEufyCameras();
+}, 60000); // check every 60 seconds
 
 // ===== MYREC SMARHUB INTEGRATION =====
 const MYREC_CONFIG = {
@@ -1162,6 +1514,29 @@ function updateOverview() {
   // Water update
   const waterVal = 187 + (Math.random() - 0.5) * 6;
   document.getElementById('ov-water').textContent = Math.round(waterVal);
+
+  // Eufy camera count for overview
+  const configured = eufyCameras.filter(c => c.enabled && c.ip && c.rtspUser && c.rtspPass).length;
+  const totalCams = eufyCameras.filter(c => c.enabled).length;
+  const ovSecurity = document.querySelector('.overview-card:last-child .value');
+  if (ovSecurity && configured > 0) {
+    // Update the security status card in overview
+    const secCard = document.querySelector('.overview-card:last-child');
+    if (secCard) {
+      const existingIcon = secCard.querySelector('.value i');
+      if (existingIcon) existingIcon.className = 'fas fa-video text-green';
+      const existingText = secCard.querySelector('.value');
+      if (existingText && existingText.childNodes.length > 1) {
+        // Has icon + text — update text only
+        const textNode = Array.from(existingText.childNodes).find(n => n.nodeType === 3);
+        if (textNode) textNode.textContent = ` ${configured} Eufy`;
+      }
+      const subEl = secCard.querySelector('.sub');
+      if (subEl) {
+        subEl.innerHTML = `<i class="fas fa-video" style="color:var(--accent)"></i> ${configured} Eufy SoloCam S340 · ${totalCams} configured`;
+      }
+    }
+  }
 }
 
 // Simulate live data changes every 5 seconds
